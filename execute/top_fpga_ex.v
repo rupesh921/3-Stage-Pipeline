@@ -1,15 +1,10 @@
 
 module top_module (
-    input  wire        clock,        // 100 MHz
-    input  wire        reset,      // Active-HIGH (BTNC)
-    output wire  [15:0] led         // LED[15:0] ACTIVE-LOW
+    input  wire        clock,      
+    input  wire        reset,      
+    output wire  [15:0] led        
 );
 
-//reg clock=0;
-//always #5 clock = ~clock;
-
-//reg reset;
-//initial begin reset = 0; #20 reset = 1; end
 
 reg[7:0]  addr=0;
 
@@ -178,16 +173,3 @@ module clock_divider(
     
 endmodule
 
-
-/*module clock_divider(
-    input  wire clk,
-    input  wire reset,
-    output reg  clk_en
-);
-
-    always @(*) begin
-            clk_en = clk;
-    end
- 
-endmodule
-*/
