@@ -73,8 +73,7 @@ wire [32:0] ex_result_subu;
 // - Otherwise, the second operand must come from the second value read from the register file
 
 assign alu_operand1 = reg_rdata1;
-assign alu_operand2 = immediate_sel
-                    	? TODO-EX-1;
+assign alu_operand2 = immediate_sel ? execute_imm : reg_rdata2; //todo1
 
 ////////////////////////////////////////////////////////////// Subtractions////////////////////////////////////////////////////////////
 
@@ -90,7 +89,7 @@ assign ex_result_subs =
 	{alu_operand1[31], alu_operand1} -
 	{alu_operand2[31], alu_operand2};
 
-assign ex_result_subu = TODO-EX-2
+assign ex_result_subu = $unsigned(alu_operand1) - $unsigned(alu_operand2);
 
 ////////////////////////////////////////////////////////////// Address & branch stall////////////////////////////////////////
 
@@ -118,8 +117,8 @@ always @(*) begin
 	branch_taken = !branch_stall;
 
 	case (1'b1)
-    	jal  : next_pc = pc + TODO-EX-3
-    	jalr : next_pc = alu_operand1 + TODO-EX-3
+    	jal  : next_pc = pc + execute_imm;
+    	jalr : next_pc = alu_operand1 + execute_imm;
 
     	branch: begin
         	case (alu_op)
@@ -131,7 +130,11 @@ always @(*) begin
                     	branch_taken = 1'b0;
             	end
             	BNE:  begin
-                	TODO-EX-3
+					next_pc = (ex_result_subs != 0)
+                          	? pc + execute_imm
+                          	: fetch_pc + 4;
+					if (ex_result_subs == 0)
+                    	branch_taken = 1'b0;
             	end
             	BLT:  begin
                 	next_pc = ex_result_subs[32]
@@ -141,7 +144,11 @@ always @(*) begin
                     	branch_taken = 1'b0;
             	end
             	BGE:  begin
-                	TODO-EX-3
+                	next_pc = !ex_result_subs[32]
+                          	? pc + execute_imm
+                          	: fetch_pc + 4;
+                	if (ex_result_subs[32])
+                    	branch_taken = 1'b0;
             	end
             	BLTU: begin
                 	next_pc = ex_result_subu[32]
@@ -151,7 +158,11 @@ always @(*) begin
                     	branch_taken = 1'b0;
             	end
             	BGEU: begin
-                	TODO-EX-3
+                	next_pc = !ex_result_subu[32]
+                          	? pc + execute_imm
+                          	: fetch_pc + 4;
+                	if (ex_result_subu[32])
+                    	branch_taken = 1'b0;
             	end
             	default: next_pc = fetch_pc; // sequential execution
         	endcase
@@ -189,16 +200,16 @@ always @(*) begin
                   	arithsubtype
                   	? alu_operand1 - alu_operand2
                   	: alu_operand1 + alu_operand2;
-            	SLL : // TODO-EX-4: Perform logical left shift
+            	SLL : ex_result = alu_operand1 << alu_operand2; //left logical
             	SLT : ex_result = ex_result_subs[32];
-            	SLTU: // TODO-EX-4: Perform unsigned comparison
-            	XOR : // TODO-EX-4: Perform bitwise XOR
+				SLTU: ex_result = ($unsigned(alu_operand1) < $unsigned(alu_operand2)) ? 1 : 0; //doubt does 1 or 0 automatically turn to 32 bits
+            	XOR : ex_result = alu_operand1 ^ alu_operand2;
             	SR  : ex_result =
                   	arithsubtype
                   	? $signed(alu_operand1) >>> alu_operand2
                   	: alu_operand1 >>> alu_operand2;
-            	OR  : // TODO-EX-4: Perform bitwise OR
-            	AND : // TODO-EX-4: Perform bitwise AND
+            	OR  : ex_result = alu_operand1 | alu_operand2;
+            	AND : ex_result = alu_operand1 & alu_operand2;
             	default: ex_result = 'hx;
         	endcase
     	end
@@ -290,15 +301,15 @@ always @(posedge clk or negedge reset_n) begin
     	ex_mem_alu_operation  <= 3'h0;
 	end
 	else if (!stall_n) begin
-    	ex_mem_result     	<= // TODO-EX-5
-    	ex_mem_mem_write  	<= // TODO-EX-5
-    	ex_mem_alu_to_reg 	<= // TODO-EX-5
-    	ex_mem_dest_reg_sel   <= // TODO-EX-5
+    	ex_mem_result     	<= ex_result;
+    	ex_mem_mem_write  	<= mem_write;
+    	ex_mem_alu_to_reg 	<= alu_to_reg;
+    	ex_mem_dest_reg_sel   <= dest_reg_sel;
     	ex_mem_branch     	<= branch_taken;
     	ex_mem_branch_nxt 	<= ex_mem_branch;   
-    	ex_mem_mem_to_reg 	<= // TODO-EX-5
-    	ex_mem_read_address   <= // TODO-EX-5
-    	ex_mem_alu_operation  <= // TODO-EX-5
+    	ex_mem_mem_to_reg 	<= mem_to_reg;
+    	ex_mem_read_address   <= read_address;
+    	ex_mem_alu_operation  <= alu_operation;
 	end
 end
 
