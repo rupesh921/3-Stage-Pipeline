@@ -136,8 +136,8 @@ initial begin
 	// - Simulation must terminate with an error if either file cannot be opened
 	// - These file handles will be used throughout the testbench for I/O
 
-	in_fd  = /* TODO-TB-1 */;
-	out_fd = /* TODO-TB-1 */;
+	in_fd  = INPUT_LOG;
+	out_fd = OUTPUT_LOG;
 
 	if (in_fd == 0) begin
     	$display("ERROR: Cannot open if_id_output.txt");
