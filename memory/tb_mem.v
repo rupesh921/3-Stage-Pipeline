@@ -14,11 +14,20 @@ module tb_mem_top();
 	wire [31:0] rdata;
 
 	instr_mem uut_imem (
-    	// TODO-TB-MEM-1: Instantiate IMEM
+		.clk(clk),
+		.pc(pc),
+		.instr(instr)
 	);
 
 	data_mem uut_dmem (
     	// TODO-TB-MEM-2: Instantiate DMEM
+		.clk(clk),
+		.re(re),
+		.raddr(raddr),
+		.we(we),
+		.waddr(waddr),
+		.wdata(wdata),
+		.wstrb(wstrb)
 	);
 
 	// 100MHz Clock Generation
