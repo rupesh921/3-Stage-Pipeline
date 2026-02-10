@@ -90,6 +90,7 @@ module data_mem (
     	//else: rdata holds value (exact match to original)
 		else begin
 			rdata <= rdata;// doubt
+		end
 	end
 
 endmodule
