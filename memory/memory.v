@@ -45,7 +45,7 @@ module data_mem (
 
 	// Declare data memory array (word-addressable, 4 KB total)
 	// TODO-DMEM-1: Declare dmem
-
+	wire [3:0] dmem [0:1023]; // idhar how to write the order of bits like 0:1023 or 1023:0
 	// Decode byte address to word index
 	wire [9:0] rindex = raddr[11:2];
 	wire [9:0] windex = waddr[11:2];
@@ -67,8 +67,8 @@ module data_mem (
     	if (we) begin
         	if (wstrb[0]) dmem[windex][7:0]   <= wdata[7:0];
         	if (wstrb[1]) dmem[windex][15:8]  <= wdata[15:8];
-        	if (wstrb[2]) // TODO-DMEM-3
-        	if (wstrb[3]) // TODO-DMEM-3
+			if (wstrb[2]) dmem[windex][23:16] <= wdata[23:16];// TODO-DMEM-3
+			if (wstrb[3]) dmem[windex][31:24] <= wdata[31:24];// TODO-DMEM-3
     	end
 
     	// ---- READ (1-cycle latency, RAW-safe) ----
