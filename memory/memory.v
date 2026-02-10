@@ -45,13 +45,16 @@ module data_mem (
 
 	// Declare data memory array (word-addressable, 4 KB total)
 	// TODO-DMEM-1: Declare dmem
-	wire [3:0] dmem [0:1023]; // idhar how to write the order of bits like 0:1023 or 1023:0
+	reg [31:0] dmem [0:1023]; // idhar how to write the order of bits like 0:1023 or 1023:0
 	// Decode byte address to word index
 	wire [9:0] rindex = raddr[11:2];
 	wire [9:0] windex = waddr[11:2];
 
 	// Simulation / FPGA init
 	// TODO-DMEM-2: Initialize data memory from dmem.hex file
+	initial begin
+		$readmemh("dmem.hex", dmem);
+	end
 
 	// -------------------------
 	// WRITE + READ (SYNC)
@@ -76,15 +79,17 @@ module data_mem (
         	if (we && (rindex == windex)) begin
             	// Byte-level forwarding
             	rdata[7:0]   <= wstrb[0] ? wdata[7:0]   : dmem[rindex][7:0];
-            	rdata[15:8]  <= // TODO-DMEM-3
-            	rdata[23:16] <= // TODO-DMEM-3
-            	rdata[31:24] <= // TODO-DMEM-3
+				rdata[15:8]  <= wstrb[1] ? wdata[15:8]  : dmem[rindex][15:8];// TODO-DMEM-3
+				rdata[23:16] <= wstrb[2] ? wdata[23:16]  : dmem[rindex][23:16];// TODO-DMEM-3
+				rdata[31:24] <= wstrb[3] ? wdata[31:24]  : dmem[rindex][31:24];// TODO-DMEM-3
         	end
         	else begin
             	rdata <= dmem[rindex];
         	end
     	end
-    	// else: rdata holds value (exact match to original)
+    	//else: rdata holds value (exact match to original)
+		else begin
+			rdata <= rdata;// doubt
 	end
 
 endmodule
