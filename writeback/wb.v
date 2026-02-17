@@ -115,19 +115,19 @@ always @(posedge clk or negedge reset) begin
                 wb_write_data_o <= {4{alu_operand2_i[7:0]}};
                 case (write_address_i[1:0])
                     2'b00:  wb_write_byte_o <= 4'b0001;
-                    2'b01:  wb_write_byte_o <= TODO
-                    2'b10:  wb_write_byte_o <= TODO
-                    default:wb_write_byte_o <= TODO
+                    2'b01:  wb_write_byte_o <= 4'b0010; //todo
+                    2'b10:  wb_write_byte_o <= 4'b0100; //todo
+                    default:wb_write_byte_o <= 4'b1000; //todo. doubt here
                 endcase
             end
 		// TODO-WB: Store Halfword (SH)
             SH: begin
                 wb_write_data_o <= {2{alu_operand2_i[15:0]}};
-                wb_write_byte_o <= write_address_i[1] ? 4'b1100 : TODO;
+				wb_write_byte_o <= write_address_i[1] ? 4'b1100 : 4'b0011; //todo
             end
             SW: begin
                 wb_write_data_o <= alu_operand2_i;
-                wb_write_byte_o <= TODO;
+                wb_write_byte_o <= 4'b1111; //todo
             end
             default: begin
                 wb_write_data_o <= 32'hx;
@@ -153,7 +153,7 @@ always @* begin
                 2'b00: wb_read_data_o = {{24{dmem_read_data_i[7]}},  dmem_read_data_i[7:0]};
                 2'b01: wb_read_data_o = {{24{dmem_read_data_i[15]}}, dmem_read_data_i[15:8]};
                 2'b10: wb_read_data_o = {{24{dmem_read_data_i[23]}}, dmem_read_data_i[23:16]};
-                2'b11: wb_read_data_o = TODO
+				2'b11: wb_read_data_o = {{24{dmem_read_data_i[31]}}, dmem_read_data_i[31:24]}; //todo
             endcase
         end
 
