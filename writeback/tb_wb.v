@@ -102,6 +102,8 @@ module wb_tb;
         if (in_file == 0) begin
 	       // Simulation must terminate if input file is missing
 	       // TODO
+			$display("ERROR: Cannot open execute_output.txt");
+    		$finish;
         end
 
      
@@ -154,6 +156,9 @@ module wb_tb;
 
 // Close all opened files and cleanly terminate the simulation
 // TODO
+		$fclose(in_file);
+		$fclose(out_file);
+		#20 $finish;
 
     end
 
