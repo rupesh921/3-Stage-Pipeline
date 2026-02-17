@@ -27,9 +27,8 @@ module top_fpga (
 	// Instruction memory
 	instr_mem imem_inst (
     	.clk   (CLK100MHZ),       	// run at full speed
-		.pc(current_pc),
+		.pc(current_pc)
 	// TODO-TOP-MEM-1: Instantiate IMEM
-    
 	);
 
 	// Display upper or lower 16 bits of instruction
