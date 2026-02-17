@@ -36,9 +36,9 @@ module top_module (
         addr <= 0;
     else begin
         if (addr == 19)
-                addr <= TODO
+                addr <= 0; //TODO
             else
-                addr <= TODO
+                addr <= addr + 1; //TODO
         end
 end
 
