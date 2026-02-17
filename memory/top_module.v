@@ -27,7 +27,7 @@ module top_fpga (
 	// Instruction memory
 	instr_mem imem_inst (
     	.clk   (CLK100MHZ),       	// run at full speed
-    
+		.pc(current_pc),
 	// TODO-TOP-MEM-1: Instantiate IMEM
     
 	);
@@ -54,13 +54,13 @@ module clock_divider #(
 
 	always @(posedge clk) begin
     	if (reset) begin
-        	counter <= // TODO
+        	counter <= 0;// TODO
         	clk_en  <= 1'b0;
     	end else if (counter == DIVISOR - 1) begin
         	counter <= 0;
         	clk_en  <= 1'b1;   // one-cycle pulse
     	end else begin
-        	// TODO: Counter?
+        	counter <= counter + 1;// TODO: Counter?
         	clk_en  <= 1'b0;
     	end
 	end
